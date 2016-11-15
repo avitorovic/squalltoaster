@@ -19,7 +19,7 @@
  *
  */
 
-package ch.epfl.data.squall.examples.imperative.dbtoaster;
+package ch.epfl.data.squall.examples.imperative.hypercube;
 
 import ch.epfl.data.squall.components.DataSourceComponent;
 import ch.epfl.data.squall.components.OperatorComponent;
@@ -28,22 +28,24 @@ import ch.epfl.data.squall.components.dbtoaster.DBToasterJoinComponentBuilder;
 import ch.epfl.data.squall.expressions.ColumnReference;
 import ch.epfl.data.squall.operators.AggregateSumOperator;
 import ch.epfl.data.squall.operators.ProjectOperator;
+import ch.epfl.data.squall.operators.RedisOperator;
 import ch.epfl.data.squall.query_plans.QueryBuilder;
 import ch.epfl.data.squall.query_plans.QueryPlan;
 import ch.epfl.data.squall.types.LongType;
 import ch.epfl.data.squall.types.StringType;
+import ch.epfl.data.squall.types.Type;
 
 import java.util.Arrays;
 import java.util.Map;
 
-public class DBToasterHyracksPlan extends QueryPlan {
+public class HashHypercubeDBToasterHyracksPlan extends QueryPlan {
 
     private final QueryBuilder _queryBuilder = new QueryBuilder();
     private static final LongType _lc = new LongType();
     private static final StringType _sc = new StringType();
 
 
-    public DBToasterHyracksPlan(String dataPath, String extension, Map conf) {
+    public HashHypercubeDBToasterHyracksPlan(String dataPath, String extension, Map conf) {
         // -------------------------------------------------------------------------------------
 
         final ProjectOperator projectionCustomer = new ProjectOperator(
@@ -65,8 +67,9 @@ public class DBToasterHyracksPlan extends QueryPlan {
 
         // -------------------------------------------------------------------------------------
         DBToasterJoinComponentBuilder builder = new DBToasterJoinComponentBuilder();
-        builder.addRelation(relationCustomer, _lc, _sc);
-        builder.addRelation(relationOrders, _lc, _lc);
+        // Join keys should have the same name
+        builder.addRelation(relationCustomer, new Type[]{_lc, _sc}, new String[]{"column1", "column2"});
+        builder.addRelation(relationOrders, new Type[]{_lc, _lc}, new String[]{"column3", "column1"});
         builder.setSQL("SELECT CUSTOMER.f1, COUNT(ORDERS.f0) FROM CUSTOMER, ORDERS WHERE CUSTOMER.f0 = ORDERS.f1 GROUP BY CUSTOMER.f1");
 
         DBToasterJoinComponent dbToasterComponent = builder.build();
@@ -79,10 +82,11 @@ public class DBToasterHyracksPlan extends QueryPlan {
         //         new ColumnReference(_lc, 1), conf).setGroupByColumns(Arrays
         //         .asList(0));
 
-        // OperatorComponent oc = new OperatorComponent(dbToasterComponent,
-        //         "COUNTAGG").add(agg);
-        // _queryBuilder.add(oc);
+        // //RedisOperator redis = new RedisOperator(conf);
 
+        // OperatorComponent oc = new OperatorComponent(dbToasterComponent,
+        //         "COUNTAGG").add(agg);//.add(redis);
+        // _queryBuilder.add(oc);
     }
 
     @Override
