@@ -1,39 +1,23 @@
 DIP_DISTRIBUTED false
-DIP_QUERY_NAME tpch4
-DIP_QUERY_PLAN ch.epfl.data.squall.examples.imperative.theta.ThetaTPCH4Plan
+DIP_QUERY_NAME tpch3
+DIP_QUERY_PLAN ch.epfl.data.squall.examples.imperative.dbtoaster.HybridHypercubeDBToasterTPCH3PlanBruteForce
 DIP_TOPOLOGY_NAME_PREFIX username
 DIP_NUM_ACKERS 0
 
 DIP_DATA_PATH ../test/data/tpch/0.01G/
 DIP_RESULT_ROOT ../test/results/
 
-#JOIN TYPE 0 for Static, 1 for dynamic
-DIP_JOIN_TYPE 1
-
-#0 for heuristics and 1 for theoretical 
-ADVISOR_TYPE 1
-EPSILON 0.1
-
-
-ORDERS_PAR 2
+CUSTOMER_PAR 1
+ORDERS_PAR 1
 LINEITEM_PAR 1
+CUSTOMER_ORDERS_LINEITEM_PAR 6
+COUNTAGG_PAR 1
 
-ORDERS_LINEITEM_PAR 4
+CUSTOMER_CARD 1500
+ORDERS_CARD 15000
+LINEITEM_CARD 60175
 
-FINAL_RESULT_PAR 4
-
-# Define Static Theta Joins parameters Here:
-ORDERS_CARD 50
-LINEITEM_CARD 50
-
-ORDERS_LINEITEM_CARD 50
-
-
-
-# Define Dynamic Theta Joins parameters Here:
-ORDERS_LINEITEM_RESHUF_PAR 2
-DIP_THETA_CLOCK_REFRESH_RATE_MILLISECONDS 100
-
+CUSTOMER_ORDERS_LINEITEM_PART_SCHEME BRUTEFORCEHYBRIDHYPERCUBE
 
 #below are unlikely to change
 DIP_EXTENSION .tbl
